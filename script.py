@@ -3,10 +3,6 @@ filename = 'livros.txt'
 books = []
 author = []
 status = []
-max_book = 0
-max_author = 0
-max_status = 0
-
 
 #funcion read
 def read_file(file):
@@ -35,22 +31,18 @@ def read_file(file):
         if len(c) > len(max):
             max = c
             max_book = len(c)
-
-            print(c, max, max_book)
     
     max = ''
     for c in author:
         if c > max:
             max = c
             max_author = len(c)
-            print(c, max_author)
-    
+
     max = ''
     for c in status:
         if c > max:
             max = c
             max_status = len(c)
-            print(c, max_status)
     
     #calculating the header space
     header_book = max_book - 5 + 2
