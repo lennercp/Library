@@ -106,4 +106,4 @@ while True:
     else:
         print('digite um valor válido')
 
-    print()
+    print()    
