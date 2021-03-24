@@ -5,7 +5,7 @@ author = []
 status = []
 
 #funcion read
-def read_file(file):
+def read_file(file, ord, is_ord):
     books = []
     author = []
     status = []
@@ -25,22 +25,118 @@ def read_file(file):
             if i == 2:
                 status.append(lines[c] [i])
     
+    
+    if ord:
+        ordenar(books, author, status, is_ord)
+    else:
+        output(books, author, status)
+
+def ordenar(book, author, status, is_ord):
+    c = 0
+    crescente = True
+
+    mid = int(len(book) / 2)
+    point = mid
+    while c == 0:
+        trocas = 0
+        certeza = 0
+        if is_ord == '1':
+            if crescente == True:
+                if book[point] > book[point + 1]:
+                    book[point], book[point + 1] = book[point + 1], book[point]
+                    author[point], author[point + 1] = author[point + 1], author[point]
+                    status[point], status[point + 1] = status[point + 1], status[point]
+                    trocas += 1
+                
+                point += 1
+                if point == len(book) - 1:
+                    point -= 1
+                    crescente = False
+            else:
+                if book[point] < book[point - 1]:
+                    book[point], book[point - 1] = book[point - 1], book[point]
+                    author[point], author[point - 1] = author[point - 1], author[point]
+                    status[point], status[point - 1] = status[point - 1], status[point]
+                    trocas += 1
+                
+                point -= 1
+                if point == 0:
+                    crescente = True
+                
+                    if trocas == 0:
+                        c = 1
+        elif is_ord == '2':
+            if crescente == True:
+                if author[point] > author[point + 1]:
+                    author[point], author[point + 1] = author[point + 1], author[point]
+                    book[point], book[point + 1] = book[point + 1], book[point]
+                    status[point], status[point + 1] = status[point + 1], status[point]
+                    trocas += 1
+                
+                point += 1
+                if point == len(book) - 1:
+                    point -= 1
+                    crescente = False
+            else:
+                if author[point] < author[point - 1]:
+                    author[point], author[point - 1] = author[point - 1], author[point]
+                    book[point], book[point - 1] = book[point - 1], book[point]
+                    status[point], status[point - 1] = status[point - 1], status[point]
+                    trocas += 1
+                
+                point -= 1
+                if point == 0:
+                    crescente = True
+                
+                    if trocas == 0:
+                        c = 1
+        elif is_ord == '3':
+            if crescente == True:
+                if status[point] > status[point + 1]:
+                    status[point], status[point + 1] = status[point + 1], status[point]
+                    author[point], author[point + 1] = author[point + 1], author[point]
+                    book[point], book[point + 1] = book[point + 1], book[point]
+                    trocas += 1
+                
+                point += 1
+                if point == len(book) - 1:
+                    point -= 1
+                    crescente = False
+            else:
+                if status[point] < status[point - 1]:
+                    status[point], status[point - 1] = status[point - 1], status[point]
+                    author[point], author[point - 1] = author[point - 1], author[point]
+                    book[point], book[point - 1] = book[point - 1], book[point]
+                    trocas += 1
+                
+                point -= 1
+                if point == 0:
+                    crescente = True
+                
+                    if trocas == 0:
+                        point = 0
+                        crescente = True
+
+                 
+    output(book, author, status)
+
+def output(book, author, status):
     #finding the longest string
     max = ''
-    for c in books:
+    for c in book:
         if len(c) > len(max):
             max = c
             max_book = len(c)
     
     max = ''
     for c in author:
-        if c > max:
+        if len(c) > len(max):
             max = c
             max_author = len(c)
 
     max = ''
     for c in status:
-        if c > max:
+        if len(c) > len(max):
             max = c
             max_status = len(c)
     
@@ -51,38 +147,51 @@ def read_file(file):
 
     #header
     print('livros', ' '*header_book,'Autor', ' '*header_author,'Estado', ' '*header_status)
-
     #output
-    for c in range(len(books)):
+    for c in range(len(book)):
         #calculating the space of books, author and status
-        space_book = max_book - len(books[c]) +3
+        space_book = max_book - len(book[c]) +3
         space_author = max_author - len(author[c]) +3
         space_status = max_status - len(status[c]) +3
 
         #print
-        print(f'{books[c].capitalize()}', ' '*space_book, f'{author[c].title()}',' '*space_author, f'{status[c].title()}', ' '*space_status)
+        print(f'{book[c]}', ' '*space_book, f'{author[c]}',' '*space_author, f'{status[c]}', ' '*space_status)
         print()
         
 #function write in the file
 def write_file(file, book, author, status):
     arquivo = open(filename, 'a')
-    arquivo.write(f'\n{book}|{author}|{status}')
+    if vazio:
+        arquivo.write(f'{book.title()}|{author.title()}|{status.title()}')
+    else:
+        arquivo.write(f'\n{book.title()}|{author.title()}|{status.title()}')
     arquivo.close()
 
 #Inicializing the file
 try:
-    file = open(filename,'x')
+    file = open(filename,'x',encoding='latin1')
+    file.close()
 except FileExistsError:
-    with open(filename) as file_object:
-        file = file_object.read()
+    pass
 
 #input 
 while True:
+    with open(filename, encoding='latin1') as file_object:
+        file = file_object.read()
+
     choice = input('[1]Ler a lista de livros\n[2]Adicionar livro\n[3]Sair: ')
 
     if choice == '1':
-        file = open(filename)
-        read_file(file.read())
+        if file == '':
+            print('Não existe nada no arquivo, adicione algum livro!')
+            vazio = True
+            continue
+        choice2 = input('[1]Ler a lista normal\n[2]Ler a lista ordenada\n')
+        if choice2 == '1':
+            read_file(file, False, choice2)
+        if choice2 == '2':
+            choice3 = input('Ordenar por\n[1]Título\n[2]Autor\n[3]Status: ')
+            read_file(file, True, choice3)
 
     elif choice == '2':
         book = input('Digite o nome do livro: ')
