@@ -16,6 +16,7 @@ class Books:
         self.conn.commit()
         self.conn.close()
         self.cur.close()
+        print('fechou')
 
     def addBook(self, title, author, status):
         try:
@@ -26,24 +27,45 @@ class Books:
     def findBook(self, title):
         try:
             self.cur.execute(f"SELECT * FROM table_books WHERE title='{title}'")
-            print(self.cur.fetchall())
+            return (self.cur.fetchall())
         except Exception as e:
             print('deu erro', e)
     
     def orderBooks(self, table, order):
-        if table.lower() not in ['title', 'author', 'status']:
+        if table.lower() not in ['id','title', 'author', 'status']:
             return -1
         elif order.upper() not in ['ASC', 'DESC']:
             return -1
         else:
             self.cur.execute(f"SELECT * FROM table_books ORDER BY {table.lower()} {order.upper()}")
-            print(self.cur.fetchall())
-with Books() as b:
+            return (self.cur.fetchall())
+
+    def deleteBook(self, id):
+        try:
+            self.cur.execute(f"DELETE FROM table_books WHERE id = {id}")
+        except Exception as e:
+            print('deu erro', e)
+# with Books() as b:
     # b.addBook('codIgo da vinci', 'DAn BRown', 'LiDo')
     # b.addBook('Chronos', 'Rysa walker', 'LiDo')
     # b.addBook('feminismo: subversão', 'ana campagnolo', 'pretendo')
     # b.findBook('Chronos')
-    b.orderBooks('status', 'Desc')
+    # b.orderBooks('id', 'Desc')
+
+def central(operation, *params):
+    operations = {'insert': 'b.addBook(', 'find': 'b.findBook(', 'order':'b.orderBooks(', 'delete': 'b.deleteBook('}
+    if operation in operations.keys():
+        with Books() as b:
+            try:
+                value = eval(f'{operations[operation]} *params)')
+                if value is not None:
+                    print(value)
+            except Exception as e:
+                print('deu erro', e)
+
+# central('insert', 'diario de um banana', 'jeff kinney', 'lido')
+# central('delete', '5')
+central('order', 'id', 'ASC')
 
 #funcion read
 # def read_file(file, ord, is_ord):
